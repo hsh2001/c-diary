@@ -3,7 +3,8 @@
 #include <time.h>
 #include <string.h>
 
-void put_diary(int date, char[], int description);
+void put_diary(int, char[]);
+void get_diary(int, char[]);
 
 int main(void) 
 {
@@ -13,19 +14,20 @@ int main(void)
 void put_diary(int date, char description[])
 { 
 	char filename[20];
-
 	FILE *fp;
+
 	sprintf(filename, "%d", date);
 	strcat(filename, ".txt");
 	fp = fopen(filename, "w");
 	fprintf(fp, "%s", description);
 	fclose(fp);
 }
+
 void get_diary(int date, char description[])
 { 
 	char filename[20];
-
 	FILE *fp;
+
 	sprintf(filename, "%d", date);
 	strcat(filename, ".txt");
 	fp = fopen(filename, "r");
