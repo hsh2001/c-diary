@@ -10,23 +10,23 @@ void print_title(void);
 int get_date_file_name(void);
 void scan_description(char[]);
 void put_diary(int, char[]);
-void get_diary(int, char[]);
+int get_diary(int, char[]);
 
 int main(void) 
 {
-	int menu,
-		date;
+	int menu, date, year, month, day;
 	char description[MAX_DIARY_LENGTH] = "";
 
 	while (1) 
 	{
+		description[0] = '\0';
 		print_title();
 		scanf("%d", &menu);
+		system("cls");
 		switch (menu)
 		{
 		case 1: 
 			//일기 쓰기 시작
-			system("cls");
 			scan_description(description);
 			date = get_date_file_name();
 			put_diary(date, description);
@@ -35,10 +35,25 @@ int main(void)
 			break;
 		case 2: 
 			//일기 보기 시작
+			printf("확인하고 싶은 날짜를 입력해주세요 (YYYY.MM.DD): ");
+			scanf("%d.%d.%d", &year, &month, &day);
+			system("cls");
+			date = (year * 10000 + month * 100 + day);
+
+			if (get_diary(date, description))
+				printf("\n\n%d.txt의 정보:\n%s\n\n(그만 보려면 아무 키나 누르세요.)\n", date, description);
+			else
+				puts("그 날에는 일기를 작성하지 않았습니다.\n(아무 키나 눌러 메인화면으로 돌아가기.)\n");
+			
+			getchar();
+			getchar();
+			system("cls");
 			break;
 		case 3:
+			//프로그램 종료
 			return 0;
 		default:
+			//잘못된 번호 입력
 			system("cls");
 			puts("잘못된 번호를 입력하셨습니다. 다시 입력해주세요.\n");
 			break;
@@ -95,10 +110,9 @@ void scan_description(char description[])
 
 	getchar();
 	printf("%s(0/%d)\n", guide, MAX_DIARY_LENGTH - 1);
-	
+
 	while ((ch = getchar()) != EOF)
 	{
-		putchar(ch);
 		description[index] = ch;
 		index = strlen(description);
 		
@@ -133,7 +147,7 @@ void put_diary(int date, char description[])
 	fclose(fp);
 }
 
-void get_diary(int date, char description[])
+int get_diary(int date, char description[])
 { 
 	char filename[20];
 	FILE *fp;
@@ -141,6 +155,11 @@ void get_diary(int date, char description[])
 	sprintf(filename, "%d", date);
 	strcat(filename, ".txt");
 	fp = fopen(filename, "r");
-	fgets(description, sizeof(description), fp);
+
+	if (fp == NULL)
+		return 0;
+
+	fgets(description, MAX_DIARY_LENGTH, fp);
 	fclose(fp);
+	return 1;
 }
